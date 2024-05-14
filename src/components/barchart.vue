@@ -50,7 +50,7 @@ let y = d3.scaleBand()
     },
     computed: {
         names: { get() {return new Set(this.data.map(d => d.name))} },
-        datevalues: { get() { console.log(this.data); return Array.from(d3.rollup(this.data, ([d]) => d.value, d => +d.date, d => d.name))
+        datevalues: { get() { return Array.from(d3.rollup(this.data, ([d]) => d.value, d => +d.date, d => d.name))
             .map(([date, data]) => [new Date(date), data])
             .sort(([a], [b]) => d3.ascending(a, b))}},
         keyframes: { get() {
@@ -186,16 +186,8 @@ let y = d3.scaleBand()
     },
     watch: {
         play1(newValue) {
-            console.log("got", newValue)
             if (newValue) {
-                this.intervalId = setInterval(() => {
-                    this.currentIndex = (this.currentIndex + 1) % this.data.length;
-                    plot.data = [this.data[this.currentIndex]];
-                    console.log(plot.data)
-                }, 1000); // Change the interval as needed
-            } else {
-                clearInterval(this.intervalId);
-                this.intervalId = null;
+                console.log("should play")
             }
         },
         async dataStr(newValue) {

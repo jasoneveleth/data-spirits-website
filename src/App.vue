@@ -28,7 +28,6 @@ export default{
   },
   methods: {
     play1(x) {
-      console.log("sending", x)
       this.playing1 = x
     }
   },

@@ -1,7 +1,16 @@
+<!-- Use: 
+<radio :value="selectedOption" :options="options" :modelValue="selectedOption" @update:modelValue="x => selectedOption = x" name="barRadio"/>
+<p>Selected option: {{ selectedOption }}</p>
+
+import radio from "./radio.vue"
+data() {
+  selectedOption: "wine", // default
+} -->
+
 <template>
     <div>
       <label v-for="(option, index) in options" :key="index" :for="option.id">
-        <input type="radio" :id="option.id" :value="option.value" @onclick="emit('update:modelValue', option.value)" :name="name" :checked="option.value == this.value">
+        <input type="radio" :id="option.id" :value="option.value" @click="$emit('update:modelValue', option.value)" :name="name" :checked="option.value == this.value">
         {{ option.label }}
       </label>
     </div>
@@ -29,6 +38,8 @@
     data() {
       return {
       };
+    },
+    methods: {
     },
     watch: {
     },
