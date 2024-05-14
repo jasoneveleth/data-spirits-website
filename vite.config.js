@@ -3,11 +3,17 @@ import vue from '@vitejs/plugin-vue'
 import path from 'path'
 
 // https://vitejs.dev/config/
-export default defineConfig({
-  plugins: [vue()],
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, 'src')
-    }
-  },
-})
+export default ({ mode }) => {
+  const isProduction = mode === 'production';
+  const basePath = process.env.VITE_BASE_PATH || (isProduction ? '/data-spirits-website/' : '/');
+
+  return defineConfig({
+    base: basePath,
+    plugins: [vue()],
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, 'src')
+      }
+    },
+  });
+};
