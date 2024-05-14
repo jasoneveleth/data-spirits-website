@@ -4,7 +4,7 @@
       <barchart_settings @play1="x => play1(x)"/>
       <heatmap_settings/>
     </div>
-    <barchart v-if="using_barchart" :play1="playing1"/>
+    <barchart v-if="using_barchart" :play1="playing1" :dataStr="dataStr"/>
     <heatmap v-if="!using_barchart"/>
   </div>
 </template>
@@ -23,6 +23,7 @@ export default{
       using_barchart: true,
       playing1: false,
       playing2: false,
+      dataStr: [],
     }
   },
   methods: {
@@ -30,7 +31,11 @@ export default{
       console.log("sending", x)
       this.playing1 = x
     }
-  }
+  },
+  async mounted() {
+      let res = await fetch("/population.json")
+      this.dataStr = JSON.parse(await res.text())
+  },
 }
 </script>
 

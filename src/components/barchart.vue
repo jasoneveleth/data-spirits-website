@@ -11,66 +11,7 @@ import * as d3 from 'd3';
 // ======================================
 // ======================================
 
-const dataStr = [
-  {date: "2000-01-01", name: "Coca-Cola", category: "Beverages", value: 72537},
-  {date: "2000-01-01", name: "Microsoft", category: "Technology", value: 35000},
-  {date: "2000-01-01", name: "IBM", category: "Technology", value: 34200},
-  {date: "2000-01-01", name: "General Electric", category: "Conglomerate", value: 33700},
-  {date: "2000-01-01", name: "Intel", category: "Technology", value: 33700},
-  {date: "2000-01-01", name: "Nokia", category: "Technology", value: 33000},
-
-  {date: "2001-01-01", name: "Microsoft", category: "Technology", value: 60000},
-  {date: "2001-01-01", name: "Coca-Cola", category: "Beverages", value: 60000},
-  {date: "2001-01-01", name: "IBM", category: "Technology", value: 52600},
-  {date: "2001-01-01", name: "General Electric", category: "Conglomerate", value: 52400},
-  {date: "2001-01-01", name: "Intel", category: "Technology", value: 50900},
-  {date: "2001-01-01", name: "Nokia", category: "Technology", value: 50000},
-
-  {date: "2002-01-01", name: "Microsoft", category: "Technology", value: 52000},
-  {date: "2002-01-01", name: "IBM", category: "Technology", value: 52000},
-  {date: "2002-01-01", name: "General Electric", category: "Conglomerate", value: 52000},
-  {date: "2002-01-01", name: "Coca-Cola", category: "Beverages", value: 51000},
-  {date: "2002-01-01", name: "Intel", category: "Technology", value: 50000},
-  {date: "2002-01-01", name: "Nokia", category: "Technology", value: 50000},
-
-  {date: "2003-01-01", name: "Microsoft", category: "Technology", value: 50000},
-  {date: "2003-01-01", name: "IBM", category: "Technology", value: 50000},
-  {date: "2003-01-01", name: "General Electric", category: "Conglomerate", value: 50000},
-  {date: "2003-01-01", name: "Coca-Cola", category: "Beverages", value: 50000},
-  {date: "2003-01-01", name: "Intel", category: "Technology", value: 50000},
-  {date: "2003-01-01", name: "Nokia", category: "Technology", value: 50000},
-]
-
 const parseTime = d3.timeParse("%Y-%m-%d");
-const data = dataStr.map(d => ({date: parseTime(d.date), name: d.name, category: d.category, value: d.value}));
-
-
-  export default{
-    props: ["play1"],
-    emits: [],
-    components: {},
-    data() {
-      return {
-        currentIndex: 0,
-        intervalId: null,
-        data: [
-            { time: "2020", A: 0, B: 20, C: 10 },
-            { time: "2021", A: 5, B: 25, C: 15 },
-            { time: "2022", A: 10, B: 30, C: 20 },
-            { time: "2023", A: 20, B: 40, C: 30 },
-            { time: "2024", A: 30, B: 50, C: 40 },
-        ],
-      }
-    },
-    computed: {
-    },
-    methods: {
-    },
-    async mounted() {
-//===============================================
-//===============================================
-//===============================================
-//===============================================
 
 const barSize = 48
 const marginTop = 16
@@ -85,7 +26,11 @@ const height = marginTop + barSize * n + marginBottom
 const width = 975
 const duration = 250
 
-const svg = d3.select("svg")
+
+const tickFormat = d3.format(",d")
+const formatNumber = d3.format(",d")
+const formatDate = d3.utcFormat("%Y")
+
 
 let x = d3.scaleLinear([0, 1], [marginLeft, width - marginRight])
 let y = d3.scaleBand()
@@ -93,175 +38,151 @@ let y = d3.scaleBand()
   .rangeRound([marginTop, marginTop + barSize * (n + 1 + 0.1)])
   .padding(0.1)
 
-const names = new Set(data.map(d => d.name))
-const datevalues = Array.from(d3.rollup(data, ([d]) => d.value, d => +d.date, d => d.name))
-  .map(([date, data]) => [new Date(date), data])
-  .sort(([a], [b]) => d3.ascending(a, b))
+  export default{
+    props: ["play1", "dataStr"],
+    emits: [],
+    components: {},
+    data() {
+      return {
+        currentIndex: 0,
+        intervalId: null,
+      }
+    },
+    computed: {
+        names: { get() {return new Set(this.data.map(d => d.name))} },
+        datevalues: { get() { console.log(this.data); return Array.from(d3.rollup(this.data, ([d]) => d.value, d => +d.date, d => d.name))
+            .map(([date, data]) => [new Date(date), data])
+            .sort(([a], [b]) => d3.ascending(a, b))}},
+        keyframes: { get() {
+            const resArr = [];
+            let ka, a, kb, b;
+            for ([[ka, a], [kb, b]] of d3.pairs(this.datevalues)) {
+            for (let i = 0; i < k; ++i) {
+                const t = i / k;
+                resArr.push([
+                new Date(ka * (1 - t) + kb * t),
+                this.rank(name => (a.get(name) || 0) * (1 - t) + (b.get(name) || 0) * t)
+                ]);
+            }
+            }
+            resArr.push([new Date(kb), this.rank(name => b.get(name) || 0)]);
+            return resArr;
+        }},
+        color: { get() {return this.colorf(this.data)}},
+        nameframes: {get() { return d3.groups(this.keyframes.flatMap(([, data]) => data), d => d.name)}},
+        prev: {get() { return new Map(this.nameframes.flatMap(([, data]) => d3.pairs(data, (a, b) => [b, a])))}},
+        next: {get() { return new Map(this.nameframes.flatMap(([, data]) => d3.pairs(data)))}},
+        data: {get() {
+            return this.dataStr.map(d => ({date: parseTime(d.date), name: d.name, category: d.category, value: d.value}))
+        }}
+    },
+    methods: {
+        rank(value) {
+        const data = Array.from(this.names, name => ({name, value: value(name)}));
+        data.sort((a, b) => d3.descending(a.value, b.value));
+        for (let i = 0; i < data.length; ++i) data[i].rank = Math.min(n, i);
+        return data;
+        },
+        bars(svg) {
+        let bar = svg.append("g")
+            .attr("fill-opacity", 0.6)
+            .selectAll("rect");
 
-const keyframes = [];
-let ka, a, kb, b;
-for ([[ka, a], [kb, b]] of d3.pairs(datevalues)) {
-  for (let i = 0; i < k; ++i) {
-	const t = i / k;
-	keyframes.push([
-	  new Date(ka * (1 - t) + kb * t),
-	  rank(name => (a.get(name) || 0) * (1 - t) + (b.get(name) || 0) * t)
-	]);
-  }
-}
-keyframes.push([new Date(kb), rank(name => b.get(name) || 0)]);
+        return ([date, data], transition) => bar = bar
+            .data(data.slice(0, n), d => d.name)
+            .join(
+            enter => enter.append("rect")
+                .attr("fill", this.color)
+                .attr("height", y.bandwidth())
+                .attr("x", x(0))
+                .attr("y", d => y((this.prev.get(d) || d).rank))
+                .attr("width", d => x((this.prev.get(d) || d).value) - x(0)),
+            update => update,
+            exit => exit.transition(transition).remove()
+                .attr("y", d => y((next.get(d) || d).rank))
+                .attr("width", d => x((next.get(d) || d).value) - x(0))
+            )
+            .call(bar => bar.transition(transition)
+            .attr("y", d => y(d.rank))
+            .attr("width", d => x(d.value) - x(0)));
+        },
+        labels(svg) {
+        let label = svg.append("g")
+            .style("font", "bold 12px var(--sans-serif)")
+            .style("font-variant-numeric", "tabular-nums")
+            .attr("text-anchor", "end")
+            .selectAll("text");
 
-const tickFormat = d3.format(",d")
-const formatNumber = d3.format(",d")
-const formatDate = d3.utcFormat("%Y")
+        return ([date, data], transition) => label = label
+            .data(data.slice(0, n), d => d.name)
+            .join(
+            enter => enter.append("text")
+                .attr("transform", d => `translate(${x((this.prev.get(d) || d).value)},${y((this.prev.get(d) || d).rank)})`)
+                .attr("y", y.bandwidth() / 2)
+                .attr("x", -6)
+                .attr("dy", "-0.25em")
+                .text(d => d.name)
+                .call(text => text.append("tspan")
+                .attr("fill-opacity", 0.7)
+                .attr("font-weight", "normal")
+                .attr("x", -6)
+                .attr("dy", "1.15em")),
+            update => update,
+            exit => exit.transition(transition).remove()
+                .attr("transform", d => `translate(${x((this.next.get(d) || d).value)},${y((this.next.get(d) || d).rank)})`)
+                .call(g => g.select("tspan").tween("text", d => this.textTween(d.value, (this.next.get(d) || d).value)))
+            )
+            .call(bar => bar.transition(transition)
+            .attr("transform", d => `translate(${x(d.value)},${y(d.rank)})`)
+            .call(g => g.select("tspan").tween("text", d => this.textTween((this.prev.get(d) || d).value, d.value))));
+        },
+        textTween(a, b) {
+        const i = d3.interpolateNumber(a, b);
+        return function(t) {
+            this.textContent = formatNumber(i(t));
+        };
+        },
+        axis(svg) {
+        const g = svg.append("g")
+            .attr("transform", `translate(0,${marginTop})`);
 
-let nameframes = d3.groups(keyframes.flatMap(([, data]) => data), d => d.name)
-let prev = new Map(nameframes.flatMap(([, data]) => d3.pairs(data, (a, b) => [b, a])))
-let next = new Map(nameframes.flatMap(([, data]) => d3.pairs(data)))
+        const axis = d3.axisTop(x)
+            .ticks(width / 160, tickFormat)
+            .tickSizeOuter(0)
+            .tickSizeInner(-barSize * (n + y.padding()));
 
-const updateBars = bars(svg);
-const updateAxis = axis(svg);
-const updateLabels = labels(svg);
-const updateTicker = ticker(svg);
+        return (_, transition) => {
+            g.transition(transition).call(axis);
+            g.select(".tick:first-of-type text").remove();
+            g.selectAll(".tick:not(:first-of-type) line").attr("stroke", "white");
+            g.select(".domain").remove();
+        };
+        },
+        ticker(svg) {
+        const now = svg.append("text")
+            .style("font", `bold ${barSize}px var(--sans-serif)`)
+            .style("font-variant-numeric", "tabular-nums")
+            .attr("text-anchor", "end")
+            .attr("x", width - 6)
+            .attr("y", marginTop + barSize * (n - 0.45))
+            .attr("dy", "0.32em")
+            .text(formatDate(this.keyframes[0][0]));
 
-const color = colorf(data);
-
-
-for (const keyframe of keyframes) {
-  const transition = svg.transition()
-	  .duration(duration)
-	  .ease(d3.easeLinear);
-
-  // Extract the top bar’s value.
-  x.domain([0, keyframe[1][0].value]);
-
-  updateAxis(keyframe, transition);
-  updateBars(keyframe, transition);
-  updateLabels(keyframe, transition);
-  updateTicker(keyframe, transition);
-
-  // invalidation.then(() => svg.interrupt());
-  await transition.end();
-}
-
-// ############################
-// ############################
-
-
-function rank(value) {
-  const data = Array.from(names, name => ({name, value: value(name)}));
-  data.sort((a, b) => d3.descending(a.value, b.value));
-  for (let i = 0; i < data.length; ++i) data[i].rank = Math.min(n, i);
-  return data;
-}
-
-function bars(svg) {
-  let bar = svg.append("g")
-      .attr("fill-opacity", 0.6)
-    .selectAll("rect");
-
-  return ([date, data], transition) => bar = bar
-    .data(data.slice(0, n), d => d.name)
-    .join(
-      enter => enter.append("rect")
-        .attr("fill", color)
-        .attr("height", y.bandwidth())
-        .attr("x", x(0))
-        .attr("y", d => y((prev.get(d) || d).rank))
-        .attr("width", d => x((prev.get(d) || d).value) - x(0)),
-      update => update,
-      exit => exit.transition(transition).remove()
-        .attr("y", d => y((next.get(d) || d).rank))
-        .attr("width", d => x((next.get(d) || d).value) - x(0))
-    )
-    .call(bar => bar.transition(transition)
-      .attr("y", d => y(d.rank))
-      .attr("width", d => x(d.value) - x(0)));
-}
-
-function labels(svg) {
-  let label = svg.append("g")
-      .style("font", "bold 12px var(--sans-serif)")
-      .style("font-variant-numeric", "tabular-nums")
-      .attr("text-anchor", "end")
-    .selectAll("text");
-
-  return ([date, data], transition) => label = label
-    .data(data.slice(0, n), d => d.name)
-    .join(
-      enter => enter.append("text")
-        .attr("transform", d => `translate(${x((prev.get(d) || d).value)},${y((prev.get(d) || d).rank)})`)
-        .attr("y", y.bandwidth() / 2)
-        .attr("x", -6)
-        .attr("dy", "-0.25em")
-        .text(d => d.name)
-        .call(text => text.append("tspan")
-          .attr("fill-opacity", 0.7)
-          .attr("font-weight", "normal")
-          .attr("x", -6)
-          .attr("dy", "1.15em")),
-      update => update,
-      exit => exit.transition(transition).remove()
-        .attr("transform", d => `translate(${x((next.get(d) || d).value)},${y((next.get(d) || d).rank)})`)
-        .call(g => g.select("tspan").tween("text", d => textTween(d.value, (next.get(d) || d).value)))
-    )
-    .call(bar => bar.transition(transition)
-      .attr("transform", d => `translate(${x(d.value)},${y(d.rank)})`)
-      .call(g => g.select("tspan").tween("text", d => textTween((prev.get(d) || d).value, d.value))));
-}
-
-function textTween(a, b) {
-  const i = d3.interpolateNumber(a, b);
-  return function(t) {
-    this.textContent = formatNumber(i(t));
-  };
-}
-
-function axis(svg) {
-  const g = svg.append("g")
-      .attr("transform", `translate(0,${marginTop})`);
-
-  const axis = d3.axisTop(x)
-      .ticks(width / 160, tickFormat)
-      .tickSizeOuter(0)
-      .tickSizeInner(-barSize * (n + y.padding()));
-
-  return (_, transition) => {
-    g.transition(transition).call(axis);
-    g.select(".tick:first-of-type text").remove();
-    g.selectAll(".tick:not(:first-of-type) line").attr("stroke", "white");
-    g.select(".domain").remove();
-  };
-}
-
-function ticker(svg) {
-  const now = svg.append("text")
-      .style("font", `bold ${barSize}px var(--sans-serif)`)
-      .style("font-variant-numeric", "tabular-nums")
-      .attr("text-anchor", "end")
-      .attr("x", width - 6)
-      .attr("y", marginTop + barSize * (n - 0.45))
-      .attr("dy", "0.32em")
-      .text(formatDate(keyframes[0][0]));
-
-  return ([date], transition) => {
-    transition.end().then(() => now.text(formatDate(date)));
-  };
-}
-
-function colorf(data) {
-  const scale = d3.scaleOrdinal(d3.schemeTableau10);
-  if (data.some(d => d.category !== undefined)) {
-    const categoryByName = new Map(data.map(d => [d.name, d.category]))
-    scale.domain(categoryByName.values());
-    return d => scale(categoryByName.get(d.name));
-  }
-  return d => scale(d.name);
-}
-// =====================================
-// =====================================
-// =====================================
-
+        return ([date], transition) => {
+            transition.end().then(() => now.text(formatDate(date)));
+        };
+        },
+        colorf(data) {
+        const scale = d3.scaleOrdinal(d3.schemeTableau10);
+        if (data.some(d => d.category !== undefined)) {
+            const categoryByName = new Map(data.map(d => [d.name, d.category]))
+            scale.domain(categoryByName.values());
+            return d => scale(categoryByName.get(d.name));
+        }
+        return d => scale(d.name);
+        },
+    },
+    mounted() {
     },
     watch: {
         play1(newValue) {
@@ -275,6 +196,31 @@ function colorf(data) {
             } else {
                 clearInterval(this.intervalId);
                 this.intervalId = null;
+            }
+        },
+        async dataStr(newValue) {
+            const svg = d3.select("svg")
+
+            const updateBars = this.bars(svg);
+            const updateAxis = this.axis(svg);
+            const updateLabels = this.labels(svg);
+            const updateTicker = this.ticker(svg);
+
+            for (const keyframe of this.keyframes) {
+            const transition = svg.transition()
+                .duration(duration)
+                .ease(d3.easeLinear);
+
+            // Extract the top bar’s value.
+            x.domain([0, keyframe[1][0].value]);
+
+            updateAxis(keyframe, transition);
+            updateBars(keyframe, transition);
+            updateLabels(keyframe, transition);
+            updateTicker(keyframe, transition);
+
+            // invalidation.then(() => svg.interrupt());
+            await transition.end();
             }
         }
     }

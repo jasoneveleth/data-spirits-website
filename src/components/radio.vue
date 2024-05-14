@@ -1,7 +1,7 @@
 <template>
     <div>
       <label v-for="(option, index) in options" :key="index" :for="option.id">
-        <input type="radio" :id="option.id" :value="option.value" @onclick="emit('update:modelValue', option.value)" :name="name">
+        <input type="radio" :id="option.id" :value="option.value" @onclick="emit('update:modelValue', option.value)" :name="name" :checked="option.value == this.value">
         {{ option.label }}
       </label>
     </div>
