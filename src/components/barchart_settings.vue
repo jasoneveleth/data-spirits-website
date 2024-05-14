@@ -1,7 +1,9 @@
 <template>
-    <div class="container">
-        <h1 class="label">Bar Chart Race Settings</h1>
-        <mybutton @click="tryplay1" text="Algorithm 1" :icon="play" :isactive="!canplay1"/>
+    <div class="vbox container">
+        <h1>Bar Chart Race Settings</h1>
+        <mybutton @click="play1" text="Start animation" :icon="myicon" :isactive="!canplay1"/>
+        <radio :options="options" v-model="selectedOption"/>
+        <p>Selected option: {{ selectedOption }}</p>
         <!-- <mybutton @click="$emit('draw_state_change')" :text="mytext" :icon="myicon"/> -->
         <!-- <h1 class="label">Miles: {{calc_miles()}}</h1> -->
     </div>
@@ -10,78 +12,61 @@
   <script>
   import mybutton from "./mybutton.vue"
   import play from "@/assets/play.svg"
+  import pause from "@/assets/pause.svg"
   import plus from "@/assets/plus.svg"
   import map from "@/assets/map.svg"
   import share from "@/assets/share.svg"
+  import radio from "./radio.vue"
   
   export default{
-    props: ["loss", "canplay1", "canplay2", "isdrawing", "miles"],
-    emits: ["draw_state_change", "play_button_press", "v2_button_press"],
-    components: {mybutton},
+    props: [],
+    emits: ["play1"],
+    components: {mybutton, radio},
     data() {
       return {
         play: play,
         plus: plus,
+        pause: pause,
         map: map,
         share: share,
+        playing: false,
+        selectedOption: '',
+        options: [
+            { label: 'Wine', value: 'wine' },
+            { label: 'Beer', value: 'beer' },
+            { label: 'Bets', value: 'bets' },
+      ]
       }
     },
     computed: {
-      mytext() {
-        return this.isdrawing ? 'Map' : 'New'
-      },
       myicon() {
-        return this.isdrawing ? map : plus
+        return this.playing ? pause : play
       }
     },
     methods: {
-      calc_loss() {
-        if (this.loss) {
-          return Math.round(this.loss * 1e9) / 100
-        } else {
-          return '-.-'
-        }
+      play1() {
+        this.playing = !this.playing
+        this.$emit('play1')
       },
-      calc_miles() {
-        if (this.miles) {
-          return Math.round(this.miles * 100) / 100
-        } else {
-          return '-.-'
-        }
-      },
-      nyi() {
-        alert("not implemented")
-      },
-      tryplay2() {
-        if (this.canplay2) {
-          this.$emit('play2_button_press')
-        }
-      },
-      tryplay1() {
-        if (this.canplay1) {
-          this.$emit('play1_button_press')
-        }
-      }
     },
   }
   </script>
   
   <style scoped>
+  .vbox {
+    display: flex;
+    flex-direction: column;
+  }
   .container {
       background-color: var(--aqua);
       height: 50%;
       width: 100%;
-      display: flex;
-      flex-direction: column;
       justify-content: space-around;
       align-items: center;
   }
   h1 {
       font-size: 18px;
       font-family: inherit;
-  }
-  .label {
-      width: 120px;
   }
   </style>
   
