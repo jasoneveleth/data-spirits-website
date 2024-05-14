@@ -7,7 +7,7 @@ export default {
     props: ['text', 'icon', 'isactive'],
     computed: {
       mystyle() {
-        return !this.isactive ? "" : "opacity: 50%"
+        return this.isactive ? "" : "opacity: 50%"
       }
     }
 }

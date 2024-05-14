@@ -1,11 +1,11 @@
 <template>
     <div class="vbox container">
         <h1>Bar Chart Race Settings</h1>
-        <mybutton @click="play1" text="Start animation" :icon="myicon" :isactive="!canplay1"/>
-        <radio :options="options" v-model="selectedOption"/>
+        <radio :options="options" :modelValue="selectedOption" @update:modelValue="updateSelection" name="barRadio"/>
         <p>Selected option: {{ selectedOption }}</p>
         <!-- <mybutton @click="$emit('draw_state_change')" :text="mytext" :icon="myicon"/> -->
         <!-- <h1 class="label">Miles: {{calc_miles()}}</h1> -->
+        <mybutton @click="play1" text="Start animation" :icon="myicon" :isactive="true"/>
     </div>
   </template>
   
@@ -45,9 +45,18 @@
     },
     methods: {
       play1() {
+        if (this.playing) {
+            this.$emit('play1', ['pause', null])
+        } else {
+            this.$emit('play1', ['play', this.selectedOption])
+        }
         this.playing = !this.playing
-        this.$emit('play1')
+        
       },
+      updateSelection(value) {
+        console.log("HERE")
+        this.selectedOption = value
+      }
     },
   }
   </script>

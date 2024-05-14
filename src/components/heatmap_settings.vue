@@ -1,90 +1,62 @@
 <template>
-    <div class="container">
-      <h1 class="label">Heatmap Settings</h1>
+    <div class="vbox container">
+        <h1>Heatmap Settings</h1>
+
     </div>
   </template>
   
   <script>
   import mybutton from "./mybutton.vue"
   import play from "@/assets/play.svg"
+  import pause from "@/assets/pause.svg"
   import plus from "@/assets/plus.svg"
   import map from "@/assets/map.svg"
   import share from "@/assets/share.svg"
   
   export default{
-    props: ["loss", "canplay1", "canplay2", "isdrawing", "miles"],
-    emits: ["draw_state_change", "play_button_press", "v2_button_press"],
+    props: [],
+    emits: ["play1"],
     components: {mybutton},
     data() {
       return {
         play: play,
         plus: plus,
+        pause: pause,
         map: map,
         share: share,
+        playing: false,
+        selectedOption: '',
       }
     },
     computed: {
-      mytext() {
-        return this.isdrawing ? 'Map' : 'New'
-      },
       myicon() {
-        return this.isdrawing ? map : plus
+        return this.playing ? pause : play
       }
     },
     methods: {
-      calc_loss() {
-        if (this.loss) {
-          return Math.round(this.loss * 1e9) / 100
-        } else {
-          return '-.-'
-        }
+      play1() {
+        this.playing = !this.playing
+        this.$emit('play1')
       },
-      calc_miles() {
-        if (this.miles) {
-          return Math.round(this.miles * 100) / 100
-        } else {
-          return '-.-'
-        }
-      },
-      nyi() {
-        alert("not implemented")
-      },
-      tryplay2() {
-        if (this.canplay2) {
-          this.$emit('play2_button_press')
-        }
-      },
-      tryplay1() {
-        if (this.canplay1) {
-          this.$emit('play1_button_press')
-        }
-      }
     },
   }
   </script>
   
   <style scoped>
+  .vbox {
+    display: flex;
+    flex-direction: column;
+  }
   .container {
-    background-color: var(--blue);
+      background-color: var(--blue);
       height: 50%;
       width: 100%;
-      display: flex;
-      flex-direction: row;
       justify-content: space-around;
-      align-items: center;
-  }
-  .intermediate {
-      display: flex;
-      justify-content: space-around;
-      column-gap: 10px;
       align-items: center;
   }
   h1 {
       font-size: 18px;
       font-family: inherit;
-  }
-  .label {
-      width: 120px;
   }
   </style>
   

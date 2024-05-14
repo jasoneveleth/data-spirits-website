@@ -1,10 +1,10 @@
 <template>
   <div class="main-content">
     <div class="side-bar">
-      <barchart_settings/>
+      <barchart_settings @play1="x => play1(x)"/>
       <heatmap_settings/>
     </div>
-    <barchart v-if="using_barchart"/>
+    <barchart v-if="using_barchart" :play1="playing1"/>
     <heatmap v-if="!using_barchart"/>
   </div>
 </template>
@@ -17,22 +17,18 @@ import barchart from "./components/barchart.vue"
 import heatmap from "./components/heatmap.vue"
 
 export default{
-  components: {mybutton, barchart_settings, heatmap_settings},
+  components: {mybutton, barchart_settings, heatmap_settings, barchart, heatmap},
   data() {
     return {
       using_barchart: true,
+      playing1: false,
+      playing2: false,
     }
   },
   methods: {
-    async play_button_press() {
-      this.generation += 1
-      const pts = this.points2str(1)
-      const edges = this.edges2str()
-      let str = 'GD_iter\n' + pts + edges + this.curr_params
-      let result = await fetch(this.$hostv1, this.buildrequest(str))
-      const params = await result.text()
-      this.curr_params = params
-      this.doapi1(params)
+    play1(x) {
+      console.log("sending", x)
+      this.playing1 = x
     }
   }
 }
