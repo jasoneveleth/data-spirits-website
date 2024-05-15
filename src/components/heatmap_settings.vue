@@ -1,7 +1,7 @@
 <template>
     <div class="vbox container">
         <h1>Heatmap Settings</h1>
-
+        <mybutton @click="$emit('heatmapClick')" text="Show heatmap" :icon="map" :isactive="enableButton"/>
     </div>
   </template>
   
@@ -14,8 +14,8 @@
   import share from "@/assets/share.svg"
   
   export default{
-    props: [],
-    emits: ["play1"],
+    props: ["enableButton"],
+    emits: ["heatmapClick"],
     components: {mybutton},
     data() {
       return {
@@ -24,8 +24,6 @@
         pause: pause,
         map: map,
         share: share,
-        playing: false,
-        selectedOption: '',
       }
     },
     computed: {

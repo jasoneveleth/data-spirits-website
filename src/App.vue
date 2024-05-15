@@ -2,7 +2,7 @@
   <div class="main-content">
     <div class="side-bar">
       <barchart_settings @play1="x => play1(x)" @selectedBar="selectTheBar"/>
-      <heatmap_settings/>
+      <heatmap_settings @heatmapClick="handleHeatClick" :enableButton="using_barchart"/>
     </div>
     <barchart v-if="using_barchart" :play1="playing1" :dataStr="dataStr"/>
     <heatmap v-if="!using_barchart"/>
@@ -29,7 +29,13 @@ export default{
   },
   methods: {
     play1(x) {
+      console.log("play1!!!")
+      this.using_barchart = true
       this.playing1 = x
+    },
+    handleHeatClick() {
+      console.log("heat click")
+      this.using_barchart = false
     },
     async selectTheBar(x) {
       this.dataFile = `${__VITE_BASE_PATH__}${x}.json`
