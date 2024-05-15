@@ -298,6 +298,10 @@ export default {
   mounted() {
     this.svg = d3.select("svg");
     this.initialize(this.dataStr);
+    if (this.play1) {
+      this.goGoGo = true;
+      this.playAnimation(this.currFrame);
+    }
   },
   watch: {
     play1(newValue) {
