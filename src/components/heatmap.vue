@@ -27,13 +27,15 @@ export default {
         z: this.data, // Values associated with each state
         locationmode: "USA-states", // Specifies the location mode as state names
         colorscale: "Viridis", // Specifies the colorscale
-        colorbar: { title: "Title of Colorbar" }, // Optional colorbar title
+        colorbar: { title: "Clusters" }, // Optional colorbar title
       },
     ];
     var layout = {
       geo: {
         scope: "usa",
       },
+      width: 1000, // Set the width of the plot
+      height: 600, // Set the height of the plot
     };
 
     // Plotly plot creation
@@ -50,5 +52,13 @@ svg {
 }
 .container {
   width: 100%;
+}
+#heatmapDiv {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 </style>

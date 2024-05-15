@@ -21,5 +21,17 @@ export default ({ mode }) => {
         "@": path.resolve(__dirname, "src"),
       },
     },
+    // this will put plotly into it's own file, this way git doesn't blow up with each change to application
+    build: {
+      rollupOptions: {
+          output: {
+              manualChunks(id) {
+                  if (id.includes('plotly.js-dist')) {
+                      return 'plotly';
+                  }
+              }
+          }
+      }
+  }
   });
 };

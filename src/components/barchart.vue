@@ -17,7 +17,7 @@ const marginTop = 16;
 const marginRight = 6;
 const marginBottom = 6;
 const marginLeft = 0;
-const n = 15; // number of bars to show
+const n = 12; // number of bars to show
 
 const k = 10; // how fast things switch places?
 
@@ -182,6 +182,7 @@ export default {
         g.select(".tick:first-of-type text").remove();
         g.selectAll(".tick:not(:first-of-type) line").attr("stroke", "white");
         g.select(".domain").remove();
+        g.selectAll("line").remove(); // remove the y axis line
       };
     },
     ticker(svg) {

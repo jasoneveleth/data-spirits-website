@@ -46,12 +46,10 @@ export default {
   },
   methods: {
     play1(x) {
-      console.log("play1!!!");
       this.using_barchart = true;
       this.playing1 = x;
     },
     handleHeatClick() {
-      console.log("heat click");
       this.using_barchart = false;
     },
     async selectTheBar(x) {
