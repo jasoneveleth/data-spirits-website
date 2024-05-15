@@ -28,10 +28,10 @@ button {
 button:hover {
   border-color: #646cff;
 }
-button:focus,
+/* button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
-}
+} */
 img {
   height: 12px;
 }

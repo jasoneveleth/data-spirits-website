@@ -1,7 +1,7 @@
 <template>
   <div class="main-content">
     <div class="side-bar">
-      <barchart_settings @play1="x => play1(x)"/>
+      <barchart_settings @play1="x => play1(x)" @selectedBar="selectTheBar"/>
       <heatmap_settings/>
     </div>
     <barchart v-if="using_barchart" :play1="playing1" :dataStr="dataStr"/>
@@ -24,15 +24,22 @@ export default{
       playing1: false,
       playing2: false,
       dataStr: [],
+      dataFile: "/wine.json",
     }
   },
   methods: {
     play1(x) {
       this.playing1 = x
+    },
+    async selectTheBar(x) {
+      this.dataFile = `/${x}.json`
+      this.using_barchart = true
+      let res = await fetch(this.dataFile)
+      this.dataStr = JSON.parse(await res.text())
     }
   },
   async mounted() {
-      let res = await fetch("/population.json")
+      let res = await fetch(this.dataFile)
       this.dataStr = JSON.parse(await res.text())
   },
 }

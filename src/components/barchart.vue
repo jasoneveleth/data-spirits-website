@@ -18,7 +18,7 @@ const marginTop = 16
 const marginRight = 6
 const marginBottom = 6
 const marginLeft = 0
-const n = 12
+const n = 15
 
 const k = 10
 
@@ -44,44 +44,30 @@ let y = d3.scaleBand()
     components: {},
     data() {
       return {
-        currentIndex: 0,
-        intervalId: null,
+        svg: null,
+        currFrame: 0,
+        goGoGo: false,
+        names: undefined,
+        datevalues: undefined,
+        keyframes: undefined,
+        color: undefined,
+        nameframes: undefined,
+        prev: undefined,
+        next: undefined,
+        updateBars: undefined,
+        updateAxis: undefined,
+        updateLabels: undefined,
+        updateTicker: undefined,
       }
     },
     computed: {
-        names: { get() {return new Set(this.data.map(d => d.name))} },
-        datevalues: { get() { return Array.from(d3.rollup(this.data, ([d]) => d.value, d => +d.date, d => d.name))
-            .map(([date, data]) => [new Date(date), data])
-            .sort(([a], [b]) => d3.ascending(a, b))}},
-        keyframes: { get() {
-            const resArr = [];
-            let ka, a, kb, b;
-            for ([[ka, a], [kb, b]] of d3.pairs(this.datevalues)) {
-            for (let i = 0; i < k; ++i) {
-                const t = i / k;
-                resArr.push([
-                new Date(ka * (1 - t) + kb * t),
-                this.rank(name => (a.get(name) || 0) * (1 - t) + (b.get(name) || 0) * t)
-                ]);
-            }
-            }
-            resArr.push([new Date(kb), this.rank(name => b.get(name) || 0)]);
-            return resArr;
-        }},
-        color: { get() {return this.colorf(this.data)}},
-        nameframes: {get() { return d3.groups(this.keyframes.flatMap(([, data]) => data), d => d.name)}},
-        prev: {get() { return new Map(this.nameframes.flatMap(([, data]) => d3.pairs(data, (a, b) => [b, a])))}},
-        next: {get() { return new Map(this.nameframes.flatMap(([, data]) => d3.pairs(data)))}},
-        data: {get() {
-            return this.dataStr.map(d => ({date: parseTime(d.date), name: d.name, category: d.category, value: d.value}))
-        }}
     },
     methods: {
         rank(value) {
-        const data = Array.from(this.names, name => ({name, value: value(name)}));
-        data.sort((a, b) => d3.descending(a.value, b.value));
-        for (let i = 0; i < data.length; ++i) data[i].rank = Math.min(n, i);
-        return data;
+            const data = Array.from(this.names, name => ({name, value: value(name)}));
+            data.sort((a, b) => d3.descending(a.value, b.value));
+            for (let i = 0; i < data.length; ++i) data[i].rank = Math.min(n, i);
+            return data;
         },
         bars(svg) {
         let bar = svg.append("g")
@@ -99,8 +85,8 @@ let y = d3.scaleBand()
                 .attr("width", d => x((this.prev.get(d) || d).value) - x(0)),
             update => update,
             exit => exit.transition(transition).remove()
-                .attr("y", d => y((next.get(d) || d).rank))
-                .attr("width", d => x((next.get(d) || d).value) - x(0))
+                .attr("y", d => y((this.next.get(d) || d).rank))
+                .attr("width", d => x((this.next.get(d) || d).value) - x(0))
             )
             .call(bar => bar.transition(transition)
             .attr("y", d => y(d.rank))
@@ -181,39 +167,85 @@ let y = d3.scaleBand()
         }
         return d => scale(d.name);
         },
-    },
-    mounted() {
-    },
-    watch: {
-        play1(newValue) {
-            if (newValue) {
-                console.log("should play")
+        async playAnimation() {
+            if (!this.goGoGo) {
+                return
             }
-        },
-        async dataStr(newValue) {
-            const svg = d3.select("svg")
-
-            const updateBars = this.bars(svg);
-            const updateAxis = this.axis(svg);
-            const updateLabels = this.labels(svg);
-            const updateTicker = this.ticker(svg);
-
-            for (const keyframe of this.keyframes) {
-            const transition = svg.transition()
+            const keyframe = this.keyframes[this.currFrame]
+            const transition = this.svg.transition()
                 .duration(duration)
                 .ease(d3.easeLinear);
 
             // Extract the top bar’s value.
             x.domain([0, keyframe[1][0].value]);
 
-            updateAxis(keyframe, transition);
-            updateBars(keyframe, transition);
-            updateLabels(keyframe, transition);
-            updateTicker(keyframe, transition);
+            this.updateAxis(keyframe, transition);
+            this.updateBars(keyframe, transition);
+            this.updateLabels(keyframe, transition);
+            this.updateTicker(keyframe, transition);
 
             // invalidation.then(() => svg.interrupt());
             await transition.end();
+            this.currFrame++
+            if (this.currFrame < this.keyframes.length) {
+                this.playAnimation(this.currFrame)
             }
+        },
+        initialize(newValue) {
+            if (this.svg === null) {
+                this.svg = d3.select("svg")
+            }
+            if (newValue.length === 0) {
+                return
+            }
+            newValue.forEach(d => {
+                d.date = parseTime(d.date)
+            })
+            const thedata = newValue
+            this.currFrame = 0
+            this.svg.selectAll("*").remove();
+            this.names = new Set(thedata.map(d => d.name))
+
+            this.datevalues = Array.from(d3.rollup(thedata, ([d]) => d.value, d => +d.date, d => d.name))
+                .map(([date, data]) => [new Date(date), data])
+                .sort(([a], [b]) => d3.ascending(a, b))
+            this.keyframes = []
+            let ka, a, kb, b;
+            for ([[ka, a], [kb, b]] of d3.pairs(this.datevalues)) {
+                for (let i = 0; i < k; ++i) {
+                    const t = i / k;
+                    this.keyframes.push([
+                        new Date(ka * (1 - t) + kb * t),
+                        this.rank(name => (a.get(name) || 0) * (1 - t) + (b.get(name) || 0) * t)
+                    ])
+                }
+            }
+            this.keyframes.push([new Date(kb), this.rank(name => b.get(name) || 0)])
+            this.color = this.colorf(thedata)
+            this.nameframes = d3.groups(this.keyframes.flatMap(([, data]) => data), d => d.name)
+            this.prev = new Map(this.nameframes.flatMap(([, data]) => d3.pairs(data, (a, b) => [b, a])))
+            this.next = new Map(this.nameframes.flatMap(([, data]) => d3.pairs(data)))
+            this.updateBars = this.bars(this.svg)
+            this.updateAxis = this.axis(this.svg)
+            this.updateLabels = this.labels(this.svg)
+            this.updateTicker = this.ticker(this.svg)
+        }
+    },
+    mounted() {
+        this.svg = d3.select("svg")
+        this.initialize(this.dataStr)
+    },
+    watch: {
+        play1(newValue) {
+            if (newValue) {
+                this.goGoGo = true
+            } else {
+                this.goGoGo = false
+            }
+            this.playAnimation(this.currFrame)
+        },
+        dataStr(newValue) {
+            this.initialize(newValue)
         }
     }
   }

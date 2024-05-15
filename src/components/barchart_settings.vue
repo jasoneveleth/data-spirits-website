@@ -1,11 +1,8 @@
 <template>
   <div class="vbox container">
       <h1>Bar Chart Race Settings</h1>
-      <radio :value="selectedOption" :options="options" :modelValue="selectedOption" @update:modelValue="x => selectedOption = x" name="barRadio"/>
-      <p>Selected option: {{ selectedOption }}</p>
-      <!-- <mybutton @click="$emit('draw_state_change')" :text="mytext" :icon="myicon"/> -->
-      <!-- <h1 class="label">Miles: {{calc_miles()}}</h1> -->
-      <mybutton @click="play1" text="Start animation" :icon="myicon" :isactive="true"/>
+      <radio :value="selectedOption" :options="options" :modelValue="selectedOption" @update:modelValue="radioUpdate" name="barRadio"/>
+      <mybutton @click="play1" :text="this.playing ? 'Pause animation' : 'Play animation'" :icon="myicon" :isactive="true"/>
   </div>
 </template>
 
@@ -20,7 +17,7 @@ import radio from "./radio.vue"
 
 export default{
   props: [],
-  emits: ["play1"],
+  emits: ["play1", "selectedBar"],
   components: {mybutton, radio},
   data() {
     return {
@@ -32,9 +29,11 @@ export default{
       playing: false,
       selectedOption: "wine", // default
       options: [
-          { label: 'Wine', value: 'wine' },
-          { label: 'Beer', value: 'beer' },
-          { label: 'Bets', value: 'bets' },
+          { label: 'Wine', value: 'wine_yearly' },
+          { label: 'Beer', value: 'beer_yearly' },
+          { label: 'Spirits', value: 'spirits_yearly' },
+          { label: 'Bets', value: 'handle' },
+          { label: 'Population', value: 'population' },
     ]
     }
   },
@@ -48,6 +47,10 @@ export default{
       this.playing = !this.playing
       this.$emit('play1', this.playing)
     },
+    radioUpdate(x) {
+      this.selectedOption = x
+      this.$emit('selectedBar', x)
+    }
   },
 }
 </script>

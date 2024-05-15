@@ -8,7 +8,7 @@ data() {
 } -->
 
 <template>
-    <div>
+    <div class="vbox">
       <label v-for="(option, index) in options" :key="index" :for="option.id">
         <input type="radio" :id="option.id" :value="option.value" @click="$emit('update:modelValue', option.value)" :name="name" :checked="option.value == this.value">
         {{ option.label }}
@@ -53,4 +53,11 @@ data() {
     }
   };
   </script>
+
+  <style scoped>
+.vbox {
+  display: flex;
+  flex-direction: column;
+}
+  </style>
   
