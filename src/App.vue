@@ -1,11 +1,14 @@
 <template>
-  <div class="main-content">
-    <div class="side-bar">
-      <barchart_settings @play1="x => play1(x)" @selectedBar="selectTheBar"/>
-      <heatmap_settings @heatmapClick="handleHeatClick" :enableButton="using_barchart"/>
+  <div class="main-content vbox">
+    <topbar/>
+    <div class="hbox weird-height">
+      <div class="side-bar">
+        <barchart_settings @play1="x => play1(x)" @selectedBar="selectTheBar"/>
+        <heatmap_settings @heatmapClick="handleHeatClick" :enableButton="using_barchart"/>
+      </div>
+      <barchart v-if="using_barchart" :play1="playing1" :dataStr="dataStr"/>
+      <heatmap v-if="!using_barchart"/>
     </div>
-    <barchart v-if="using_barchart" :play1="playing1" :dataStr="dataStr"/>
-    <heatmap v-if="!using_barchart"/>
   </div>
 </template>
 
@@ -15,9 +18,10 @@ import barchart_settings from "./components/barchart_settings.vue"
 import heatmap_settings from "./components/heatmap_settings.vue"
 import barchart from "./components/barchart.vue"
 import heatmap from "./components/heatmap.vue"
+import topbar from "./components/topbar.vue"
 
 export default{
-  components: {mybutton, barchart_settings, heatmap_settings, barchart, heatmap},
+  components: {mybutton, barchart_settings, heatmap_settings, barchart, heatmap, topbar},
   data() {
     return {
       using_barchart: true,
@@ -66,6 +70,7 @@ export default{
   --black: #000;
   --white: #fff;
   --icon-grey: #A1A2A3;
+  --high-margin: 20px;
 }
 *{
   box-sizing: inherit;
@@ -78,10 +83,7 @@ html, body{
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
 }
 #app{
-  padding-top: calc(env(safe-area-inset-top) + var(--vert-padding));
-  padding-bottom: calc(env(safe-area-inset-bottom) + var(--vert-padding));
-  padding-left: calc(env(safe-area-inset-left) + var(--horizontal-padding));
-  padding-right: calc(env(safe-area-inset-right) + var(--horizontal-padding));
+  overflow: auto;
   margin: 0;
   height: 100%;
   width: 100%;
@@ -92,16 +94,27 @@ html, body{
   }
 }
 .main-content {
-  display: flex;
-  flex-direction: row;
-  height: 100%;
-  width: 100%;
+  height: calc(100% - 2*var(--high-margin));
+  width: calc(100% - 2*var(--high-margin));
+  overflow: hidden;
+  border: 1px solid black;
+  margin: var(--high-margin);
+  flex-grow: 1;
 }
-.side-bar {
+.vbox {
   display: flex;
   flex-direction: column;
-  width: 300px;
+}
+.hbox {
+  display: flex;
+  flex-direction: row;
+}
+.weird-height {
   height: 100%;
-  /* padding: 20px; */
+}
+.side-bar {
+  /* width: 300px; */
+  border-right: 1px solid black;
+  height: 100%;
 }
 </style>

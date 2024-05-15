@@ -68,6 +68,7 @@ export default{
     align-items: center;
 }
 h1 {
+    text-align: center;
     font-size: 18px;
     font-family: inherit;
 }

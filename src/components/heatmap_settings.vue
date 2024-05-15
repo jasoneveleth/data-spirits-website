@@ -51,6 +51,7 @@
       width: 100%;
       justify-content: space-around;
       align-items: center;
+      border-top: 1px solid black;
   }
   h1 {
       font-size: 18px;

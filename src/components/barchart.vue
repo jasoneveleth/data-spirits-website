@@ -205,17 +205,13 @@ let y = d3.scaleBand()
                 })
             }
             const thedata = newValue
-            console.log('11thedata222', newValue)
             this.currFrame = 0
             this.svg.selectAll("*").remove();
             this.names = new Set(thedata.map(d => d.name))
 
-            console.log('thedata', Array.from(d3.rollup(thedata, ([d]) => d.value, d => +d.date, d => d.name)))
-
             this.datevalues = Array.from(d3.rollup(thedata, ([d]) => d.value, d => +d.date, d => d.name))
                 .map(([date, data]) => [new Date(date), data])
                 .sort(([a], [b]) => d3.ascending(a, b))
-            console.log('datevalues', this.datevalues)
             this.keyframes = []
             let ka, a, kb, b;
             for ([[ka, a], [kb, b]] of d3.pairs(this.datevalues)) {
