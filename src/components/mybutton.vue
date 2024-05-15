@@ -1,16 +1,16 @@
 <template>
-    <button :style="mystyle"><img v-if="icon" :src="icon"/> {{text}}</button>
+  <button :style="mystyle"><img v-if="icon" :src="icon" /> {{ text }}</button>
 </template>
 
 <script>
 export default {
-    props: ['text', 'icon', 'isactive'],
-    computed: {
-      mystyle() {
-        return this.isactive ? "" : "opacity: 50%"
-      }
-    }
-}
+  props: ["text", "icon", "isactive"],
+  computed: {
+    mystyle() {
+      return this.isactive ? "" : "opacity: 50%";
+    },
+  },
+};
 </script>
 
 <style scoped>

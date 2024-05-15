@@ -1,51 +1,46 @@
 <template>
   <div class="container">
-      <div id="heatmapDiv"></div>
+    <div id="heatmapDiv"></div>
   </div>
 </template>
 
 <script>
-import Plotly from 'plotly.js-dist';
+import Plotly from "plotly.js-dist";
 
-export default{
+export default {
   props: [],
   emits: [],
   components: {},
   data() {
     return {
-      data: [
-          100,
-          200,
-          300,
-      ],
-    }
+      data: [100, 200, 300],
+    };
   },
-  computed: {
-  },
-  methods: {
-  },
+  computed: {},
+  methods: {},
   mounted() {
-      // Set the scope to 'usa' to focus on the United States
-      var data = [{
-			type: 'choropleth',
-			locations: ['NY', 'CA', 'RI'], // State names
-			z: this.data, // Values associated with each state
-			locationmode: 'USA-states', // Specifies the location mode as state names
-			colorscale: 'Viridis', // Specifies the colorscale
-			colorbar: {title: 'Title of Colorbar'}, // Optional colorbar title
-		}];
-		var layout = {
-			geo: {
-				scope: 'usa',
-			}
-		};
+    // Set the scope to 'usa' to focus on the United States
+    var data = [
+      {
+        type: "choropleth",
+        locations: ["NY", "CA", "RI"], // State names
+        z: this.data, // Values associated with each state
+        locationmode: "USA-states", // Specifies the location mode as state names
+        colorscale: "Viridis", // Specifies the colorscale
+        colorbar: { title: "Title of Colorbar" }, // Optional colorbar title
+      },
+    ];
+    var layout = {
+      geo: {
+        scope: "usa",
+      },
+    };
 
-        // Plotly plot creation
-        Plotly.newPlot('heatmapDiv', data, layout);
+    // Plotly plot creation
+    Plotly.newPlot("heatmapDiv", data, layout);
   },
-  watch: {
-  }
-}
+  watch: {},
+};
 </script>
 
 <style scoped>
@@ -54,6 +49,6 @@ svg {
   height: 100%;
 }
 .container {
-    width: 100%;
+  width: 100%;
 }
 </style>
