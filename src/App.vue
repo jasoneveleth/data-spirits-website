@@ -9,6 +9,7 @@
         />
         <heatmap_settings
           @heatmapClick="handleHeatClick"
+          @filename="selectHeatGuy"
           :enableButton="using_barchart"
         />
       </div>
@@ -59,6 +60,12 @@ export default {
       this.using_barchart = true;
       let res = await fetch(this.dataFile);
       this.dataStr = JSON.parse(await res.text());
+    },
+    async selectHeatGuy(x) {
+      this.heatMapDataFile = `${__VITE_BASE_PATH__}${x}`;
+      this.using_barchart = false;
+      let res = await fetch(this.heatMapDataFile);
+      this.heatMapData = JSON.parse(await res.text());
     },
   },
   async mounted() {

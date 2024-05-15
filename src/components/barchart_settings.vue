@@ -40,10 +40,10 @@ export default {
       playing: false,
       selectedOption: "beer_yearly", // default
       options: [
-        { label: "Wine", value: "wine_yearly" },
-        { label: "Beer", value: "beer_yearly" },
-        { label: "Spirits", value: "spirits_yearly" },
-        { label: "Bets", value: "handle" },
+        { label: "Wine (Gallons)", value: "wine_yearly" },
+        { label: "Beer (Gallons)", value: "beer_yearly" },
+        { label: "Spirits (Gallons)", value: "spirits_yearly" },
+        { label: "Bets ($ per capita)", value: "handle" },
         { label: "Population", value: "population" },
       ],
     };

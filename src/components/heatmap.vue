@@ -1,7 +1,10 @@
 <template>
   <div class="container">
     <div id="heatmapDiv"></div>
-    <p>The colors are not meaningful, they only indicate different clusters. White means no data.</p>
+    <p>
+      The colors are not meaningful, they only indicate different clusters.
+      White means no data.
+    </p>
   </div>
 </template>
 
@@ -9,36 +12,36 @@
 import Plotly from "plotly.js-dist";
 
 const state_order = [
-    "AZ",
-    "AR",
-    "CO",
-    "CT",
-    "DE",
-    "IL",
-    "IN",
-    "IA",
-    "KS",
-    "KY",
-    "LA",
-    "ME",
-    "MD",
-    "MA",
-    "MI",
-    "MS",
-    "MT",
-    "NV",
-    "NH",
-    "NJ",
-    "NY",
-    "OH",
-    "OR",
-    "PA",
-    "RI",
-    "SD",
-    "TN",
-    "VA",
-    "WV",
-    "WY",
+  "AZ",
+  "AR",
+  "CO",
+  "CT",
+  "DE",
+  "IL",
+  "IN",
+  "IA",
+  "KS",
+  "KY",
+  "LA",
+  "ME",
+  "MD",
+  "MA",
+  "MI",
+  "MS",
+  "MT",
+  "NV",
+  "NH",
+  "NJ",
+  "NY",
+  "OH",
+  "OR",
+  "PA",
+  "RI",
+  "SD",
+  "TN",
+  "VA",
+  "WV",
+  "WY",
 ];
 
 export default {
@@ -51,15 +54,16 @@ export default {
   computed: {},
   methods: {
     drawHeatmap() {
-    console.log(this.data);
-      var data = [{
+      var data = [
+        {
           type: "choropleth",
           locations: state_order,
           z: this.data, // Values associated with each state
           locationmode: "USA-states", // Specifies the location mode as state names
           colorscale: "Portland",
           showscale: false,
-      }];
+        },
+      ];
       var layout = {
         geo: {
           scope: "usa",
@@ -77,7 +81,7 @@ export default {
   },
   watch: {
     data(newData) {
-        this.drawHeatmap();
+      this.drawHeatmap();
     },
   },
 };
