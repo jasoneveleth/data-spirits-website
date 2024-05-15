@@ -13,7 +13,7 @@
         />
       </div>
       <barchart v-if="using_barchart" :play1="playing1" :dataStr="dataStr" />
-      <heatmap v-if="!using_barchart" />
+      <heatmap v-if="!using_barchart" :data="heatMapData" />
     </div>
   </div>
 </template>
@@ -42,6 +42,8 @@ export default {
       playing2: false,
       dataStr: [],
       dataFile: `${__VITE_BASE_PATH__}wine_yearly.json`,
+      heatMapData: null,
+      heatMapDataFile: `${__VITE_BASE_PATH__}yearly_5_beer_gross_revenue_clusters.json`,
     };
   },
   methods: {
@@ -60,8 +62,12 @@ export default {
     },
   },
   async mounted() {
-    let res = await fetch(this.dataFile);
-    this.dataStr = JSON.parse(await res.text());
+    let [res1, res2] = await Promise.all([
+      fetch(this.dataFile).then((response) => response.json()),
+      fetch(this.heatMapDataFile).then((response) => response.json()),
+    ]);
+    this.dataStr = res1;
+    this.heatMapData = res2;
   },
 };
 </script>
