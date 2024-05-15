@@ -24,7 +24,7 @@ export default{
       playing1: false,
       playing2: false,
       dataStr: [],
-      dataFile: "/wine.json",
+      dataFile: `${__VITE_BASE_PATH__}wine_yearly.json`,
     }
   },
   methods: {
@@ -32,7 +32,7 @@ export default{
       this.playing1 = x
     },
     async selectTheBar(x) {
-      this.dataFile = `/${x}.json`
+      this.dataFile = `${__VITE_BASE_PATH__}${x}.json`
       this.using_barchart = true
       let res = await fetch(this.dataFile)
       this.dataStr = JSON.parse(await res.text())

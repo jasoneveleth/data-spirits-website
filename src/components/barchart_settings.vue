@@ -27,7 +27,7 @@ export default{
       map: map,
       share: share,
       playing: false,
-      selectedOption: "wine", // default
+      selectedOption: "beer_yearly", // default
       options: [
           { label: 'Wine', value: 'wine_yearly' },
           { label: 'Beer', value: 'beer_yearly' },

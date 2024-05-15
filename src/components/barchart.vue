@@ -7,10 +7,6 @@
   <script>
 import * as d3 from 'd3';
 
-// ======================================
-// ======================================
-// ======================================
-
 const parseTime = d3.timeParse("%Y-%m-%d");
 
 const barSize = 48
@@ -18,9 +14,9 @@ const marginTop = 16
 const marginRight = 6
 const marginBottom = 6
 const marginLeft = 0
-const n = 15
+const n = 15 // number of bars to show
 
-const k = 10
+const k = 10 // how fast things switch places?
 
 const height = marginTop + barSize * n + marginBottom
 const width = 975
