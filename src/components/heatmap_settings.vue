@@ -100,18 +100,18 @@ export default {
       );
     },
     clusterUp(x) {
-        this.curCluster = x;
-        this.$emit(
-            "filename",
-            `${this.curTime}_${this.curCluster}_${this.curAlc}_${this.curBet}_clusters.json`,
-        );
+      this.curCluster = x;
+      this.$emit(
+        "filename",
+        `${this.curTime}_${this.curCluster}_${this.curAlc}_${this.curBet}_clusters.json`,
+      );
     },
     timeUp(x) {
-        this.curTime = x;
-        this.$emit(
-            "filename",
-            `${this.curTime}_${this.curCluster}_${this.curAlc}_${this.curBet}_clusters.json`,
-        );
+      this.curTime = x;
+      this.$emit(
+        "filename",
+        `${this.curTime}_${this.curCluster}_${this.curAlc}_${this.curBet}_clusters.json`,
+      );
     },
   },
 };
