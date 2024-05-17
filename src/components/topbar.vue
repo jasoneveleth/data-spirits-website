@@ -1,6 +1,6 @@
 <template>
   <div class="topbar hbox">
-    <h1>🥂 CS1951A Data Sprits Final Project 🥂</h1>
+    <h1>🥂 CS1951A Data Spirits Final Project 🥂</h1>
   </div>
 </template>
 
