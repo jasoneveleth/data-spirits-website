@@ -61,7 +61,7 @@ export default {
       ],
       Obet: [
         { label: "Handle", value: "handle" },
-        { label: "Gross", value: "gross" },
+        { label: "Gross", value: "gross_revenue" },
         { label: "Hold", value: "hold" },
       ],
       Ocluster: [
